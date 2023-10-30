@@ -1,0 +1,64 @@
+% Packages
+
+\usepackage{url}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage[usenames,dvipsnames]{xcolor}
+\definecolor{Gray}{gray}{0.7}
+\definecolor{LightGray}{gray}{0.9}
+
+% Commands
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+
+% Margin Notes
+
+\setlength {\marginparwidth }{1in}
+\usepackage[textsize=tiny, textwidth=0.8in, colorinlistoftodos]{todonotes}
+
+\newcommand{\TODO}[1]{\todo[inline, color=yellow!10]{\textbf{TODO:} #1}}
+\newcommand{\Taha}[1]{\todo[color=gray!30, linecolor=black!50]{\textbf{Taha}: #1}}
+\newcommand{\iTaha}[1]{\todo[color=gray!30, linecolor=black!50, inline]{\textbf{Taha}: #1}}
+\newcommand{\Aron}[1]{\todo[color=blue!10, linecolor=black!50]{\textbf{Aron}: #1}}
+\newcommand{\iAron}[1]{\todo[color=blue!10, linecolor=black!50, inline]{\textbf{Aron}: #1}}
+
+\newcommand{\field}[1]{\textnormal{\textit{#1}}}
+
+\newcommand{\ea}[0]{\textit{et al.}}
+\newcommand{\eg}[0]{\textit{e.g.,}}
+\newcommand{\ie}[0]{\textit{i.e.,}}
+
+% TIKZ Layouts
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\newcommand{\inputtikz}[1]{\resizebox{\linewidth}{!}{\input{#1}}}
+
+\pgfdeclarelayer{nodelayer}
+\pgfdeclarelayer{edgelayer}
+\pgfsetlayers{nodelayer,edgelayer,main}
+
+% Node styles
+\tikzstyle{box}=[fill={rgb,255: red,189; green,189; blue,189}, draw=black, shape=rectangle, minimum width=4em, minimum height=2em]
+\tikzstyle{none}=[]
+
+% Edge styles
+\tikzstyle{dashline}=[-, draw={rgb,255: red,200; green,64; blue,60}, dashed]
+\tikzstyle{dasharrow}=[->, draw={rgb,255: red,200; green,64; blue,60}, dashed]
+\tikzstyle{arrow}=[->]
+\tikzstyle{line}=[-]
+
+
+\newif\ifIncludeFigures
+% \IncludeFiguresfalse
+\IncludeFigurestrue
+\newcommand{\heavyFigure}[1]{\ifIncludeFigures{#1}\else\emph{Enable IncludeFigure in mymacros.sty to display figure.}\fi}

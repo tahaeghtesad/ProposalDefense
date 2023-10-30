@@ -1,0 +1,33 @@
+\chapter{Introduction}
+\label{chap:intro}
+
+With the increasing prevalence of Advanced Persistent Threats (APTs) posed by determined adversaries to cyberphysical systems, even the most secure software is susceptible to data breaches. Therefore, defending against these threats is of paramount importance. In recent years, computational approaches have supplanted model-based defenses, as model-based approaches are limited by the understanding of how a complex CPS works. Deep Reinforcement Learning, as a sophisticated sequential decision-making paradigm, has emerged as a pivotal tool for detecting and mitigating APT attacks and devising corresponding mitigation strategies in CPS.
+
+Markov Decision Processes (MDPs) provide a formal framework for modeling sequential decision-making in reinforcement learning. In an MDP, there are two main components: agents and environments. The agent interacts with the environment, which is characterized by a fully or partially observed state, a representation of its current situation. The agent can take actions to influence the environment, leading to a state transition that is governed by stationary transition dynamics while receiving a reward based on how well the agent performed in achieving its objective. Within this framework, agents employ a policy, a strategy that defines how they select actions based on the current observed state. The fundamental objective of reinforcement learning is to maximize the discounted future rewards over time.
+
+In many practical applications of reinforcement learning in cyber-physical systems planning and security, the RL algorithms must grapple with MDPs featuring high-dimensional action and observation spaces. In Deep Reinforcement Learning (DRL), the strategy is modeled using a parameterized deep neural network that is optimized using gradient-based search, leading to scalability challenges. This challenge is often referred to as the 'curse of dimensionality,' where the gradient diminishes given the numerous dimensions of the search space. 
+
+For instance, consider the task of safeguarding against false information injection in navigation applications. Here, adversaries seek to deceitfully mark roads and intersections as 'high-traffic' under the pretense of 'road work,' thereby rerouting vehicles onto longer or less desirable paths. To develop a robust defense strategy, it is imperative first to understand what constitutes an optimal attack. This demands the creation of a deep reinforcement learning framework for approximating the optimal attack sequence. Unfortunately, off-the-shelf reinforcement learning algorithms falter in this scenario, given the complexity involved in choosing which roads to falsely designate as blocked, especially in the context of a city-wide transportation graph featuring thousands of street links and hundreds of intersections.
+
+In adversarial reinforcement learning settings, as in the case of defense against APTs, the traditional MDP framework is extended to accommodate multiple agents, each with its own policy, actively shaping the environment's dynamics. This setting often involves two primary actors: an attacker and a defender, both striving to optimize their respective objectives. The defender seeks to protect and secure a system, while the attacker attempts to compromise it. Both agents compete in real-time, leading to dynamic and constantly evolving strategies. The environment is no longer stationary and undergoes continuous transformations in response to the actions of these competing agents, invalidating the stationary assumption of the MDP.
+
+To illustrate, consider a moving target defense scenario, where a defender strives to reconfigure assets under their control, such as servers and networked devices, in a manner that compels adversaries to remain caught in an endless cycle of exploration while probing these assets. In response, adversaries may adapt their reconnaissance strategies to evade detection. This adaptive behavior nullifies the value of reconnaissance patterns learned by the defender, necessitating the defender's ability to adapt to both old and new strategies.
+
+In our pursuit, we aim to address these core challenges:
+
+\begin{itemize}
+    \item[Scalability] 
+        \begin{enumerate}
+            \item Develop a DRL framework for identifying an optimal policy for adversaries when no defenses exist in a complex CPS.
+            
+            \item Determine an optimal defense strategy as the best response to an adversary's attack strategy under the assumption that the attack strategy remains static and stationary.
+        \end{enumerate}
+    \item[Adaptability]
+        \begin{enumerate}
+            \item A \textbf{black-box} model, where adversaries lack access to the defender's strategy and can only infer it through interactions with the environment.
+            
+            \item A \textbf{white-box} model, where adversaries possess access to the defender's strategy parameter models.
+        \end{enumerate}
+\end{itemize}
+
+In addressing these challenges, we aim to enhance the applicability of reinforcement learning in the ever-evolving landscape of cybersecurity and sequential decision-making.

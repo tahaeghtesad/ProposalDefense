@@ -1,0 +1,86 @@
+\chapter{Research Proposal}
+\label{chap:proposal}
+
+\section{Problem Statement}
+
+\section{Modeling}
+
+\iTaha{I copy pasted this from the older paragraph}
+\subsection{False Information Injection in Navigation Application}
+
+\subsubsection{Environment}
+
+The traffic model is defined by a \emph{road network} $G = (V, E)$, where $V$ is a set of nodes representing road intersections, and $E$ is a set of directed edges representing road segments between the intersections.
+Each edge $e \in E$ is associated with a tuple $e = \langle t_e, b_e, c_e, p_e \rangle$, where $t_e$ is the free flow time of the edge, $c_e$ is the capacity of the edge, and $b_e$ and $p_e$ are the parameters for the edge to calculate actual edge travel time $W_e(n_e)$ given the congestion of the network, where $n_e$ is the number of vehicles currently traveling along the edge~\cite{transportationnetworks}.
+Specifically, we use the following function for $W_e(n_e)$:
+\begin{align}
+    W_e(n) = t_e \times \left(1 + b_e \left(\frac{n_e}{c_e}\right)^{p_e}\right)
+\end{align}
+
+The \emph{set of vehicle trips} are given with $R$, where each trip $r \in R$ is a tuple $\langle o_r, d_r, s_r \rangle$, with $o_r \in V$ and $d_r \in V$ the origin and destination of the trip, respectively, and $s_r$ the number of vehicles traveling between the origin-destination pair $\langle o_r,d_r \rangle$. 
+%We assume that each trip $r$ pertains to a number of vehicles traveling from the same source to the same destination; $s_r$ is the number of such vehicles. 
+
+\subsubsection{State Transition}
+\label{sec:state}
+
+For each vehicle trip $r \in R$ at each time step $t \in \mathbb{N}$, \emph{vehicle location} $l_r^t \in V \cup (E \times \mathbb{N})$ represents the location of vehicle $r$ at the end of time step $t$, where the location is either a node in $V$ or a tuple consisting of an edge in $E$ and a number in $\mathbb{N}$, which represents the number of timesteps left to traverse the edge.
+
+Each vehicle trip begins at its origin; hence $l_r^0 = o_r$. At each timestep $t \in \mathbb{N}$, for each vehicle trip $r$ that $l_r^{t-1} \in V \setminus \{ d_r \}$, i.e., the vehicle trip is at a node but has not reached its destination yet, let $\oslash^{t-1}_r = (l_r^{t-1}, e_1, v_1, e_2, v_2, \ldots, e_k, d_r)$ be a shortest path from $l_r^{t-1}$ to $d_r$ considering congested travel times $\vect{w}^t$ as edge weights.
+Then $l_r^t = \langle e_1, \lfloor w_e^{t-1} \rceil \rangle$, where the travel time of edge $e$ is
+\begin{align}
+    w_e^t = W_e\left(\sum_{\left\{r \in R \, \middle| \, l_r^{t-1} = \langle e, \cdot \rangle \right\}} r_s \right).
+\end{align}
+Thus, for a trip $r$ with $l_r^{t-1} = \langle e, n \rangle$, i.e., the vehicle is traveling along an edge, if $n = 1$, that is, the vehicle is one time step from reaching the next intersection, $l_r^t = v_1$. Otherwise, $l_r^t = \langle e, n-1 \rangle$. 
+
+
+\subsubsection{Attacker Model}
+
+At the high level, our attack model involves adversarial perturbations to \emph{observed} (rather than actual) travel times along edges $e$, subject to a perturbation budget constraint $B \in \mathbb{N}$.
+Let $a_e^t \in \mathbb{R}$ denote the adversarial perturbation to the observed travel time over the edge $e$.
+The budget constraint is then modeled as $\|\vect{a}^t\|_1 \le B$, where $\vect{a}^t$ combines all perturbations over individual edges into a vector.
+%At each time step $t$, the adversary decides on a budget $B^t \in \mathbb{N}$, which can perturb the observed travel times such that or each edge $e \in E$ and each time step $t \in \mathbb{N}$, \emph{travel-time observation perturbation} $a_e^t \in \mathbb{R}$ represents the amount by which the adversary changes the observed travel time of edge $e$ during time step $t$, subject to $|| \vect{a}^t ||_1 = B_t$. Hence, for each edge $e \in E$, the observed travel time be
+The observed travel time over an edge $e$ is then
+\begin{align}
+    \hat{w}_e^t = w_e^t + a_e^t.
+\end{align}
+It is this observed travel time that is then used by the vehicles to calculate their shortest paths from their current positions in the traffic network to their respective destinations.
+%In the presence of an adversary, vehicle trips calculate their shortest path to their destination with perturbed travel times $\hat{w}_e^t$ rather than congested travel times $w_e^t$.
+Since we aim to develop a defense that is robust to informational assumptions about the adversary, we assume that the attacker completely observes the environment at each time step $t$, including the structure of the transit network $G$, all of the trips $R$, and the current state of each trip $l_r$. %based on which it can decide on how to perturb the edges given its budget.
+
+The attacker's goal is to maximize the total vehicle travel times, which we formalize as the following optimization problem:
+\begin{align}
+\label{E:attack}
+    \max_{\left\{\vect{a}^1, \vect{a}^2, \ldots\right\}: \, \forall t \left( || \vect{a}^t ||_1 = B \right)} ~ \sum_{t = 0}^\infty \gamma^t \cdot \sum_{\left\{ r \in R \, | \, l_r^t \neq d_r \right\}} r_s,
+\end{align}
+where $\gamma \in (0, 1)$ is a temporal discount factor.
+
+\subsubsection{Defender Model}
+
+The defender observes the edge travel times $\vect{\hat{w}}^t$ at each time $t$, and aims to learn a detector $D(\vect{\hat{w}}^t)$ that takes observed travel times as input, and returns a prediction whether or not these are due to an adversarial perturbation.
+%The defender aims to detect attacks and raise the alarm by observing the reported edge travel times by the vehicles. The detector outputs whether the observed travel times are a result of perturbation or not.
+%\begin{align}
+%    D(\vect{\hat{w}}^t) \mapsto d \in \{0, 1\}
+%\end{align}
+If the defender identifies an ongoing attack at time $t$, all future perturbations are thereby prevented, i.e., $\vect{a}^\tau = 0$ for all $\tau \geq t$.
+Failure to detect attacks entails direct consequences in terms of increased travel times as formalized in the attack model in Equation~\eqref{E:attack} (which the defender aims to minimize).
+On the other hand, false positives (alerts triggered when no attack is taking place) incur a fixed cost $c$.
+
+%By detecting an attack correctly at timestep $t$, the defender prevents further perturbations of the edge travel times
+%\begin{align}
+%    \forall_{\tau \geq t}: \vect{a}^\tau = 0
+%\end{align}
+
+\subsection{Moving Target Defense}
+
+\subsection{Resilient Control}
+
+
+\section{DRL Approaches}
+
+\subsection{Hierarchical Multi-Agent Adversarial RL}
+
+\subsection{Black-Box Model}
+
+PSRO Algorithm description
+
+\subsection{White-Box Model}
